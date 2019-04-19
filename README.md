@@ -10,7 +10,6 @@ Example:
 
 ```
 sage: TotalKummerFailure([-36,12,-1])
-output:
 M_0 = 24
 N_0 = 8
 
@@ -53,6 +52,5 @@ Returns the degree of the Kummer extension Q_{M,N}. Again, G is given simply as 
 Example:
 ```
 sage: KummerDegree([-36,12,-1],120,24)
-output:
 2304
 ```
