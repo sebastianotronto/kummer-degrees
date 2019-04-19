@@ -2,17 +2,13 @@
 A SageMath script that computes the degrees of Kummer Extensions of the rational numbers.
 It contains the following useful functions:
 
-+-----------------------+
-|TotalKummerFailure( G )|
-+-----------------------+
+## TotalKummerFailure( G )
 
-Outputs the description of the failure of maximality
-for all possible values of M and N. Here G is given as a list of generators
-(not necessarily a basis). G can also contain torsion. If G = <-1>, the program
-stops immediately.
+Outputs the description of the failure of maximality for all possible values of M and N. Here G is given as a list of generators (not necessarily a basis). G can also contain torsion. If G = <-1>, the program stops immediately.
 
 Example:
 
+```
 sage: TotalKummerFailure([-36,12,-1])
 output:
 M_0 = 24
@@ -48,11 +44,9 @@ This table can be read exactly as the first one.
   4   |   2   2   2   4   4   4   8    8
   8   |   4   4   4   8   8   8   16   16
 
--------------------------------------------------------------------------------
+```
 
-+-----------------------+
-|KummerDegree( G, M, N )|
-+-----------------------+
+## KummerDegree( G, M, N )
 
 Returns the degree of the Kummer extension Q_{M,N}. Again, G is given simply as
 a list of generators and it may contain torsion.
@@ -61,4 +55,3 @@ sage: KummerDegree([-36,12,-1],120,24)
 output:
 2304
 
--------------------------------------------------------------------------------
