@@ -48,10 +48,11 @@ This table can be read exactly as the first one.
 
 ## KummerDegree( G, M, N )
 
-Returns the degree of the Kummer extension Q_{M,N}. Again, G is given simply as
-a list of generators and it may contain torsion.
+Returns the degree of the Kummer extension Q_{M,N}. Again, G is given simply as a list of generators and it may contain torsion.
 
+Example:
+```
 sage: KummerDegree([-36,12,-1],120,24)
 output:
 2304
-
+```
