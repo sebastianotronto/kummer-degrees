@@ -335,8 +335,6 @@ def parameters_Q4( gb, l ):
 
         return parameters_Q( gb, 2 )
 
-
-
 # Uses Theorem 18 to compute the degree of Kummer extensions.
 def compute_vl( p, n, m, r ):
     h = [ x[1] for x in p ]
@@ -625,26 +623,39 @@ def print_total_table( data ):
     print "M_0 =", M0
     print "N_0 =", N0
     print ""
-    print "The following table shows the total failure of Kummer degrees", 
+    print "The following table shows the total failure of Kummer", 
     if torsion:
-        print "in\n case the quotient M/N is EVEN."
+        print "degrees in case the quotient M/N is EVEN."
     else:
-        print "."
-    print "Columns correspond to values of M, rows to values of N"
-    print ""
-    print "The degree of the Kummer extension (M,N) can be extracted by taking"
-    print "the value f (failure) of the entry at (gcd(N,N0),gcd(M,M0)) and"
-    print "simply computing ed(M,N) / f, where ed(M,N) is the expected degree"
-    print "of the Kummer extension."
+        print "degrees."
+    print "The degree of the Kummer extension (M,N) is e / f, where",
     if torsion:
-        print "In this case (-1 is in G), we have ed(M,N) = 2^e*phi(M)*N^r,"
-        print "where e=1 if N is even and e=0 if N is odd."
+        print "e = phi(M)*N^rank(G) if N is odd and e = 2*phi(M)*N^rank(G)",
+        print "if N is even",
+    else:
+        print "e = phi(M)*N^rank(G)",
+    print "and f is the entry of the table below at the row labelled with",
+    print "gcd(N,N0) and the column labelled with gcd(M,M0)."
+    print ""
+
+    #print "Columns correspond to values of M, rows to values of N."
+    #print ""
+    #print "The degree of the Kummer extension (M,N) can be extracted by taking"
+    #print "the value f (failure) of the entry at (gcd(N,N0),gcd(M,M0)) and"
+    #print "simply computing ed(M,N) / f, where ed(M,N) is the expected degree"
+    #print "of the Kummer extension."
+    #if torsion:
+    #    print "In this case (-1 is in G), we have ed(M,N) = 2^e*phi(M)*N^r,"
+    #    print "where e=1 if N is even and e=0 if N is odd."
+    #else:
+    #    print "In this case (G is torsion-free) we have ed(M,N) = phi(M)*N^r,"
+    #print "where r is the rank of G."
+    #print ""
+
+    if torsion:
         FT1 = torsion_table_even( data )
     else:
-        print "In this case (G is torsion-free) we have ed(M,N) = phi(M)*N^r,"
         FT1 = FT
-    print "where r is the rank of G."
-    print ""
 
     tt = [ ["","|"] + divs_M0 ]
     tt.append( "-" * (len(divs_M0)+2) )
@@ -654,9 +665,8 @@ def print_total_table( data ):
     print ""
 
     if torsion:
-        print "The following table shows the total failure of Kummer degrees in"
-        print "case the quotient M/N is ODD."
-        print "This table can be read exactly as the first one."
+        print "The following table shows the total failure of Kummer degrees",
+        print "in case the quotient M/N is ODD and is read as the previous one."
         print ""
 
         # A good strategy is the following:
