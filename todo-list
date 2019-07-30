@@ -1,4 +1,5 @@
 - Decent output format. What information might the user want?
+  - maybe not so bad right now
 - Caching for efficient subsequent computations on the same group
   - What is Sage standard for this kind of stuff?
 - Standardize to Sage coding style
