@@ -275,127 +275,67 @@ def l_adic_failure_from_data( B, l, tablel, M, N ):
     
     return l^(r*n-tablel[m-1][0][n-1])
 
-# Computes the l-divisibility parameters of G over Q4, given a good basis b
+# Returns the l-dvisibility parameters of G over Q, given a good basis gb of G,
+# as a list of pairs (di,hi).
+def parameters_Q( gb, l ):
+    ret = []
+    for i in range( len( gb ) ):
+        for j in gb[i]:
+            ret.append( (i,0) )
+    return ret
+
+# Computes the l-divisibility parameters of G over Q4, given a good basis gb
 # over Q for G. Returns a list of pairs (di,hi).
 # If l is odd it just uses the good basis given to compute the parameters.
+# If l=2, it uses the results of PST-2.
 def parameters_Q4( gb, l ):
-    # Converts from "good basis format" to simple list
-    b = []
-    for x in gb:
-        b += x
-    ret = []
-    
     if l != 2:
-        for i in range( len( gb ) ):
-            for j in gb[i]:
-                ret.append( (i,0) )
-        return ret
+        return parameters_Q( gb, l )
     else:
-        R.<y> = PolynomialRing( QQ )
-        pol = R(y^2+1)
-        Q4.<eye> = NumberField( pol ) # I already use i for other things
+        # Converts from "good basis format" to simple list
+        b = []
+        for x in gb:
+            b += x
+    
+        M = exponent_matrix( b )
 
-        # Factorize basis elements over Q4 and so on.
-        d = []
-        B = []
-        h = []
-        ideals_list = set()
-        M = [] # Exponent matrix of the Bi's
+        # Thanks to my terrible notation, the elements of b are what are called
+        # g_i in the article, while the elements of bb will be the b_i's.
+        bb = [ abs(b[i]) ^ (2^(-divisibility(M[i],2))) for i in range(len(b)) ]
 
-        # Pre-process to find all ideals appearing in the factorization and fix
-        # a chosen generator for each of them. This is important in order to
-        # compute the "sign" (h-parameter) of an element with respect to it Bi.
-        for g in b:
-            factorization_list = list( Q4.ideal(g).factor() )
-            ideals_list |= set( [ x[0] for x in factorization_list ] )
-        ideals_list = list( ideals_list )
-        # Chooses a generator of each principal ideal in the list
-        irreducibles_list = [ J.gens_reduced()[0] for J in ideals_list ]
+        # Computing a combination of bb elements of the form 2 * square.
+        MM = exponent_matrix( bb + [2] ).change_ring( GF( 2 ) ) 
 
-        # Compute the Q4-parameters of the given basis b. Also computes the
-        # exponent matrix of the Bi's 
-        for g in b:
-            factorization_list = list( Q4.ideal(g).factor() )
-            exps = [ x[1] for x in factorization_list ]
-            d.append( divisibility( exps, l ) )
-            Bg = 1
-            for j in range(len(factorization_list)):
-                a = 0
-                for i in range( len( ideals_list ) ):
-                    if ideals_list[i] == factorization_list[j][0]:
-                        a = irreducibles_list[i]
-                        break
-                Bg *= a ^ (exps[j]/(l^d[-1]))
-            B.append(Bg)
-            u = g / (Bg^(l^d[-1]))
-            if not u.is_unit():
-                print "Error: g is not the right power of the computed Bg."
-                print "g:", g, ", Bg:", Bg, ", exponent:", l^d[-1]
-            if u == 1:
-                h.append( 0 )
-            elif u == -1:
-                h.append( 1 )
-            else:
-                h.append( 2 ) 
+        for a in MM.kernel().basis():
+            if a[-1] != 0:
+                # the vector a[0:-1] gives the coefficients for a combination
+                # of the b_i's of the form 2 * square
+                
+                # Basis elements that actually appear in the combination
+                c = [ b[i] for i in range(len(a[0:-1])) if a[i] != 0 ]
 
-        # Make the exponent matrix M (for now as a list of rows)
-        for g in B:
-            row = [0] * len(ideals_list)
-            for i in range(len(ideals_list)):
-                I = ideals_list[i]
-                ee = 1
-                while (I^ee).divides(g):
-                    ee += 1
-                row[i] = ee-1
-            M.append(row)
+                # Return the parameters, changing only the ones fo the element
+                # of highest divisibility that appears in the combination.
+                ret = []
+                div_max = -1
+                ind_max = -1
+                for i in range(len(b)):
+                    ret.append( (divisibility(M[i],2), 1-max(0,sgn(b[i]))) )
+                    if a[i] != 0 and ret[i][0] > div_max:
+                        div_max = ret[i][0]
+                        ind_max = i
+                d1, h1 = ret[ind_max]
+                if d1 == 1:
+                    h1 = 1 - h1
+                elif d1 == 0:
+                    h1 = 2
+                ret[ind_max] = ( d1+1, h1 )
 
-        # If the Bi's are not strongly independent, apply the algorithm (only
-        # once) to produce a new basis. The new basis has maximal parameters.
-        coeffs = find_combination( matrix(M), l )
-        if coeffs != []:
+                return ret
 
-            maxi = -1
-            maxd = -1
-            for i in range(len(d)):
-                if d[i] > maxd and coeffs[i] != 0:
-                    maxd = d[i]
-                    maxi = i
+        return parameters_Q( gb, 2 )
 
-            x = [(a/coeffs[maxi]).lift() for a in coeffs] # Now a vector of int
 
-            new_element = 1
-            for i in range(len(d)):
-                new_element *= b[i]^( x[i] * l^(d[maxi]-d[i]) )
-        
-            b[maxi] = new_element
-
-            # Compute new B, d and so on.
-            factorization_list = list( Q4.ideal(b[maxi]).factor() )
-            exps = [ x[1] for x in factorization_list ]
-            d[maxi] = divisibility( exps, l )
-            Bg = 1
-
-            for j in range(len(factorization_list)):
-                a = 0
-                for i in range( len( ideals_list ) ):
-                    if ideals_list[i] == factorization_list[j][0]:
-                        a = irreducibles_list[i]
-                        break
-                Bg *= a ^ (exps[j]/(l^d[maxi]))
-            B[maxi] = Bg
-            M[maxi] = [ x[1] for x in list( Q4.ideal(Bg).factor() ) ]
-            u = b[maxi] / (Bg^(l^d[maxi]))
-            if not u.is_unit():
-                print "Error: new element is not the right power of B."
-                print "New el.:", b[maxi], ", B:", Bg, ", exponent:", l^d[maxi]
-            if u == 1:
-                h[maxi] = 0
-            elif u == -1:
-                h[maxi] = 1
-            else:
-                h[maxi] = 2 
-            
-        return [(d[i],h[i]) for i in range(len(d))]
 
 # Uses Theorem 18 to compute the degree of Kummer extensions.
 def compute_vl( p, n, m, r ):
@@ -404,6 +344,28 @@ def compute_vl( p, n, m, r ):
     M = max( m, max( [ h[i] + ni[i] for i in range( len( p ) ) ] ) )
     
     return M - m + r*n - sum( ni )
+
+# Computes a basis for G from a set of generators.
+# Returns a pair (B,torsion) where B is a list of rational numbers and torsion
+# is true if -1 is in G and false otherwise.
+def generators_to_basis( G ):
+    (BM,BM_primes) = exponent_matrix_with_sign_and_primes( G )
+    BM = BM.echelon_form()
+    BM_primes.append(-1)
+    B = []
+    torsion = False
+
+    for r in BM.rows():
+        gr = product( [ BM_primes[i]^r[i] for i in range(len(r)) ] )
+        if gr == -1:
+            torsion = True
+            break
+        elif gr == 1:
+            break
+        else:
+            B.append(gr)
+
+    return (B,torsion)
 
 # Given any basis b of a group G computes an l-good basis for G. This is done
 # using the algorithm outlined in the proof of Theorem 14 of (Debry-Perucca).
@@ -549,22 +511,7 @@ def TotalKummerFailure( G ):
 # return any value.
 def total_kummer_failure( G, output ):
 
-    # Computing a basis.
-    (BM,BM_primes) = exponent_matrix_with_sign_and_primes( G )
-    BM = BM.echelon_form()
-    BM_primes.append(-1)
-    B = []
-    torsion = False
-
-    for r in BM.rows():
-        gr = product( [ BM_primes[i]^r[i] for i in range(len(r)) ] )
-        if gr == -1:
-            torsion = True
-            break
-        elif gr == 1:
-            break
-        else:
-            B.append(gr)
+    B, torsion = generators_to_basis( G )
 
     if len(B) == 0:
         print "G is torsion. The extension is cyclotomic. Stopping."
