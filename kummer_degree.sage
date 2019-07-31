@@ -1,5 +1,5 @@
 ###############################################################################
-# This software allows one to compute the degree of certain field extensions  #
+# This program allows one to compute the degree of certain field extensions   #
 # of the rational numbers. In particular, it can compute the degree over Q of #
 # extensions of the form Q( sqrt[N](G), \zeta_M ), where:                     #
 #  - N and M are integers with N dividing M;                                  #
