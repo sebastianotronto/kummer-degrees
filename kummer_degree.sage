@@ -1,3 +1,14 @@
+###############################################################################
+# This software allows one to compute the degree of certain field extensions  #
+# of the rational numbers. In particular, it can compute the degree over Q of #
+# extensions of the form Q( sqrt[N](G), \zeta_M ), where:                     #
+#  - N and M are integers with N dividing M;                                  #
+#  - G is a finitely generated subgroup of the multiplicative group of Q      #
+#  - \zeta_M is a primitive M-th root of unity                                #
+# The group G does not have to be given in a particular format. A finite set  #
+# of generators is sufficient.                                                #
+###############################################################################
+
 # Computes the "adelic Kummer failure", i.e. the degrees of the intersection
 # of the the Kummer extension Q(\sqrt{2^n}{G}) with the M-th cyclotomic field
 # over Q_{2^n}.
@@ -58,7 +69,7 @@ def adelic_failure_gb( B, d ):
     # shortlist, we declare it here and increase it appropriately at each step.
     M = 1
 
-    for n in range( 1, N+1 ): # 1 \leq n \leq N
+    for n in range( 1, N+1 ):
 
         # We add the new elements to the shortlist, modifying M if needed.
         # This is not done in case we are in the extra "fake" level (this case
