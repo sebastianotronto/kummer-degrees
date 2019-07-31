@@ -187,7 +187,7 @@ def special_embed( (n,b) ):
 #     degree of Q_{l^m,l^n} over Q_{l^m}, where l = L[i]
 def total_l_adic_failure( B ):
 
-    bp = bad_primes( B )
+    bp = bad_primes(B)
     ret = ( bp, [] )
 
     for l in bp:
@@ -196,25 +196,21 @@ def total_l_adic_failure( B ):
     return ret
 
 # Computes the "bad primes", i.e. the ones for which the l-adic part is not
-# maximal. Used by l_adic_degree and total_l_adic_failure.
+# maximal. Used by total_l_adic_failure.
 def bad_primes( B ):
     M = exponent_matrix( B )
     (a,b) = M.dimensions()
+
     if a > b or M.rank() < a:
         print "This is not a basis"
         return
 
     # Compute which primes l divide all minors of the exponent matrix
-    ms = M.minors( a )
-    d = ms[0]
-    for m in ms:
-        d = gcd( d, m )
-    bad_primes = list( prime_factors( d ) )
+    bad_primes = list( prime_factors( gcd( M.minors(a) ) ) )
     if 2 not in bad_primes:
         bad_primes += [2] # 2 is always bad
-    bad_primes.sort() # Ensures 2 is always first
 
-    return bad_primes
+    return sorted(bad_primes) # Ensures 2 is always first
    
 # Computes the l-adic failure for a specific l. Returns a "table" as described
 # above "total_l_adic_failure".
@@ -266,7 +262,6 @@ def l_adic_failure_from_data( B, l, tablel, M, N ):
         return 1
     r = len(B)
 
-    # Basically, the "dual" of what we do in l_adic_degree.
     if m > len(tablel):
         if n > len(tablel):
             return l^tablel[-1][1]
@@ -278,11 +273,12 @@ def l_adic_failure_from_data( B, l, tablel, M, N ):
 # Returns the l-dvisibility parameters of G over Q, given a good basis gb of G,
 # as a list of pairs (di,hi).
 def parameters_Q( gb, l ):
-    ret = []
-    for i in range( len( gb ) ):
-        for j in gb[i]:
-            ret.append( (i,0) )
-    return ret
+    #ret = []
+    #for i in range( len( gb ) ):
+    #    for j in gb[i]:
+    #        ret.append( (i,0) )
+    #return ret
+    return [x for a in [[(i,0)]*len(gb[i]) for i in range(len(gb))] for x in a]
 
 # Computes the l-divisibility parameters of G over Q4, given a good basis gb
 # over Q for G. Returns a list of pairs (di,hi).
@@ -293,9 +289,10 @@ def parameters_Q4( gb, l ):
         return parameters_Q( gb, l )
     else:
         # Converts from "good basis format" to simple list
-        b = []
-        for x in gb:
-            b += x
+        #b = []
+        #for x in gb:
+        #    b += x
+        b = [ x for a in gb for x in a ]
     
         M = exponent_matrix( b )
 
@@ -314,7 +311,7 @@ def parameters_Q4( gb, l ):
                 # Basis elements that actually appear in the combination
                 c = [ b[i] for i in range(len(a[0:-1])) if a[i] != 0 ]
 
-                # Return the parameters, changing only the ones fo the element
+                # Return the parameters, changing only the ones for the element
                 # of highest divisibility that appears in the combination.
                 ret = []
                 div_max = -1
@@ -350,31 +347,39 @@ def generators_to_basis( G ):
     (BM,BM_primes) = exponent_matrix_with_sign_and_primes( G )
     BM = BM.echelon_form()
     BM_primes.append(-1)
-    B = []
-    torsion = False
 
-    for r in BM.rows():
-        gr = product( [ BM_primes[i]^r[i] for i in range(len(r)) ] )
-        if gr == -1:
-            torsion = True
-            break
-        elif gr == 1:
-            break
-        else:
-            B.append(gr)
+    #B = []
+    #torsion = False
 
-    return (B,torsion)
+    #for r in BM.rows():
+    #    gr = product( [ BM_primes[i]^r[i] for i in range(len(r)) ] )
+    #    if gr == -1:
+    #        torsion = True
+    #        break
+    #    elif gr == 1:
+    #        break
+    #   else:
+    #        B.append(gr)
+
+    #return (B,torsion)
+
+    B = [ prod([BM_primes[i]^r[i] for i in range(len(r))]) for r in BM.rows() ]
+
+    return ( [ x for x in B if abs(x) != 1 ], -1 in B )
+
 
 # Given any basis b of a group G computes an l-good basis for G. This is done
 # using the algorithm outlined in the proof of Theorem 14 of (Debry-Perucca).
 def make_good_basis( b, l ):
     M = exponent_matrix( b )
-    d = []
-    B = []
-    for i in range(len(b)):
-        di = divisibility( M[i], l )
-        d.append( di )
-        B.append( abs(b[i])^(1/(l^di)) )
+    #d = []
+    #B = []
+    #for i in range(len(b)):
+    #    di = divisibility( M[i], l )
+    #    d.append( di )
+    #    B.append( abs(b[i])^(1/(l^di)) )
+    d = [ divisibility(x,l) for x in M ]
+    B = [ abs(b[i])^(1/(l^d[i])) for i in range(len(b)) ]
 
     # Computes the coeffiecients of a linear combination of the rows of M
     # that is zero modulo l. These coefficients are elements of F_l.
@@ -393,23 +398,26 @@ def make_good_basis( b, l ):
 
         x = [ (a/coeffs[maxi]).lift() for a in coeffs ] # Now a vector of ints
 
-        new_element = 1
-        for i in range(len(d)):
-            new_element *= b[i]^( x[i] * l^(d[maxi]-d[i]) )
+        #new_elt = 1
+        #for i in range(len(d)):
+        #    new_elt *= b[i]^( x[i] * l^(d[maxi]-d[i]) )
+        new_elt = prod([ b[i]^(x[i]*l^(d[maxi]-d[i])) for i in range(len(d)) ])
         
-        b[maxi] = new_element
+        b[maxi] = new_elt
         M = exponent_matrix( b )
         d[maxi] = divisibility( M[maxi], l )
         B[maxi] = abs(b[maxi])^(1/(l^d[maxi]))
         
         coeffs = find_combination( exponent_matrix( B ), l )
 
-    GB = [[]]
-    for i in range(len(d)):
-        while( len(GB) <= d[i] ):
-            GB.append([])
-        GB[d[i]].append(b[i])
-    return GB
+    #GB = [[]]
+    #for i in range(len(d)):
+    #    while( len(GB) <= d[i] ):
+    #        GB.append([])
+    #    GB[d[i]].append(b[i])
+    #return GB
+
+    return [[b[i] for i in range(len(b)) if d[i]==j] for j in range(max(d)+1)]
 
 # Takes a good basis B and adjusts the sign of the elements so that there is at
 # most one negative generator (of positive divisibility). The input is a good
@@ -472,11 +480,14 @@ def exponent_matrix( B ):
 # Returns a pair (M,L) where M is the modified exponent matrix and L is the
 # list of primes appearing in the factorization.
 def exponent_matrix_with_sign_and_primes( B ): 
-    prime_list = set()
-    for g in B:
-        prime_list |= set( prime_factors( g ) )
-    prime_list = list( prime_list )
+    #prime_list = set()
+    #for g in B:
+    #    prime_list |= set( prime_factors( g ) )
+    #prime_list = list( prime_list )
+
+    prime_list = list({ x for a in [prime_factors(g) for g in B] for x in a })
     np = len( prime_list )
+
     rows = []
     for g in B:
         rowg = [0] * np
@@ -484,10 +495,7 @@ def exponent_matrix_with_sign_and_primes( B ):
             for i in range( np ):
                 if f[0] == prime_list[i]:
                     rowg[i] = f[1]
-        s = 0
-        if sgn(g) == -1:
-            s = 1
-        rowg.append( s )
+        rowg.append( 1 - max(0,sgn(g)) ) 
         rows.append( rowg )
     return ( matrix( rows ), prime_list )
 
@@ -510,12 +518,11 @@ def TotalKummerFailure( G ):
 def total_kummer_failure( G, output ):
 
     B, torsion = generators_to_basis( G )
+    r = len(B) # Rank of G
 
-    if len(B) == 0:
+    if r == 0:
         print "G is torsion. The extension is cyclotomic. Stopping."
         return False
-
-    r = len(B) # Rank of G
 
     # Compute l-adic data (straightforward)
     ( bad_primes, l_adic_failure_table ) = total_l_adic_failure( B )
@@ -525,9 +532,11 @@ def total_kummer_failure( G, output ):
     adelic_failure_table = adelic_failure_gb( GB, d )
     
     # Computing the bounds M0 and N0
-    N0 = 1
-    for i in range(len( bad_primes )):
-        N0 *= bad_primes[i] ^ len( l_adic_failure_table[i][-1][0] )
+    #N0 = 1
+    #for i in range(len( bad_primes )):
+    #    N0 *= bad_primes[i] ^ len( l_adic_failure_table[i][-1][0] )
+    N0 = prod( [ bad_primes[i] ^ len( l_adic_failure_table[i][-1][0] ) \
+            for i in range(len(bad_primes)) ] )
     # Extra factors of 2 may come from the adelic failure
     N0 = lcm( N0, 2^len( adelic_failure_table ) )
     divs_N0 = divisors(N0)
@@ -638,20 +647,6 @@ def print_total_table( data ):
     print "gcd(N,N0) and the column labelled with gcd(M,M0)."
     print ""
 
-    #print "Columns correspond to values of M, rows to values of N."
-    #print ""
-    #print "The degree of the Kummer extension (M,N) can be extracted by taking"
-    #print "the value f (failure) of the entry at (gcd(N,N0),gcd(M,M0)) and"
-    #print "simply computing ed(M,N) / f, where ed(M,N) is the expected degree"
-    #print "of the Kummer extension."
-    #if torsion:
-    #    print "In this case (-1 is in G), we have ed(M,N) = 2^e*phi(M)*N^r,"
-    #    print "where e=1 if N is even and e=0 if N is odd."
-    #else:
-    #    print "In this case (G is torsion-free) we have ed(M,N) = phi(M)*N^r,"
-    #print "where r is the rank of G."
-    #print ""
-
     if torsion:
         FT1 = torsion_table_even( data )
     else:
@@ -689,57 +684,46 @@ def print_total_table( data ):
 def print_case_list( data ):
 
     ( ( r, torsion ), ( M0, divs_M0 ), ( N0, divs_N0 ), FT ) = data
-
     FT_odd = torsion_table_odd( data )
-    # FT1 is either FT or FT_even in the torsion case
-    FT1 = FT
+
     if torsion:
         FT1 = torsion_table_even( data )
-    pf = []
-    for row in FT1:
-        pf += row
-    if torsion:
-        for row in FT_odd:
-            pf += row
-    pf = list(set(pf))
-    pf.sort()
+        pf = sorted(list({ x for row in FT_odd for x in row }))
+    else:
+        FT1 = FT
+        pf = sorted(list({ x for row in FT1 for x in row }))
+
     for f in pf:
         print "Failure is", f, "if",
         if torsion:
             print "M/N is EVEN and",
         print "(gcd(M,M0),gcd(N,N0)) is one of the following:"
-        lijst = []
-        for i in range(len(divs_N0)):
-            for j in range(len(divs_M0)):
-                if FT1[i][j] == f:
-                    lijst.append( ( divs_M0[j], divs_N0[i] ) )
-        print lijst
+        print [ (divs_M0[j], divs_N0[i]) \
+                for i in range(len(divs_N0)) for j in range(len(divs_M0)) \
+                if FT1[i][j] == f ]
+
         if torsion:
             print "or if M/N is ODD and (gcd(M,M0)),gcd(N,N0)) is one of the",
             print "following:"
-
-            lijst_odd = []
-            for i in range(len(divs_N0)):
-                for j in range(len(divs_M0)):
-                    if FT_odd[i][j] == f:
-                        lijst_odd.append( ( divs_M0[j], divs_N0[i] ) )
-            print lijst_odd
+            print [ (divs_M0[j], divs_N0[i]) \
+                    for i in range(len(divs_N0)) for j in range(len(divs_M0)) \
+                    if FT_odd[i][j] == f ]
 
         print ""
 
 # Extracts a specific value of failure from the total table.
 def kummer_failure_from_total_table( M, N, data ):
     ( ( r, torsion ), ( M0, divs_M0 ), ( N0, divs_N0 ), FT ) = data
-    FT1 = FT
+
     if torsion:
         if (M/N) % 2 == 0:
             FT1 = torsion_table_even( data )
         else:
             FT1 = torsion_table_odd( data )
+    else:
+        FT1 = FT
 
-    i = divs_N0.index( gcd( N, N0 ) )
-    j = divs_M0.index( gcd( M, M0 ) )
-    return FT1[i][j]
+    return FT1[divs_N0.index( gcd( N, N0 ) )][divs_M0.index( gcd( M, M0 ) )]
 
 # Computes the degree of the Kummer extension (M,N), by taking as input the
 # table computed by TotalKummerFailure.
@@ -768,9 +752,6 @@ def KummerDegree( G, M, N ):
     if torsion and N % 2 == 0:
         exp_deg *= 2
     
-    j = divs_M0.index(gcd(M,M0))
-    i = divs_N0.index(gcd(N,N0))
-
     if torsion: 
         if (M/N)%2 == 0:
             failure = torsion_table_even( data )
@@ -779,4 +760,4 @@ def KummerDegree( G, M, N ):
     else:
         failure = FT
 
-    return exp_deg / failure[i][j]
+    return exp_deg/failure[divs_N0.index(gcd(N,N0))][divs_M0.index(gcd(M,M0))]
