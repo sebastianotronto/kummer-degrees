@@ -1,13 +1,13 @@
-###############################################################################
-# This program allows one to compute the degree of certain field extensions   #
-# of the rational numbers. In particular, it can compute the degree over Q of #
-# extensions of the form Q( sqrt[N](G), \zeta_M ), where:                     #
-#  - N and M are integers with N dividing M;                                  #
-#  - G is a finitely generated subgroup of the multiplicative group of Q      #
-#  - \zeta_M is a primitive M-th root of unity                                #
-# The group G does not have to be given in a particular format. A finite set  #
-# of generators is sufficient.                                                #
-###############################################################################
+#############################################################################
+# This program allows one to compute the degree of certain field extensions #
+# of the rational numbers. In particular, it can compute the degree over Q  #
+# of extensions of the form Q( sqrt[N](G), \zeta_M ), where:                #
+#  - N and M are integers with N dividing M;                                #
+#  - G is a finitely generated subgroup of the multiplicative group of Q    #
+#  - \zeta_M is a primitive M-th root of unity                              #
+# The group G does not have to be given in a particular format. A finite    #
+# set of generators is sufficient.                                          #
+#############################################################################
 
 # Computes the "adelic Kummer failure", i.e. the degrees of the intersection
 # of the the Kummer extension Q(\sqrt{2^n}{G}) with the M-th cyclotomic field
@@ -16,12 +16,12 @@
 # Input: a good basis B for the torsion-free group G, organized as a list of
 # lists, and a non negative integer d. They have to satisfy the following:
 # 1. Each list B[i] contains all basis elements of 2-divisibility i.
-# 2. The basis given by B is 2-maximal, that is to say it satisfies Theorem 14
-#    of Debry-Perucca; i.e. each element of B[i] is, up to plus or minus 1, the
-#    2^i-th power of a strongly 2-indivisible rational.
+# 2. The basis given by B is 2-maximal, that is to say it satisfies Theorem 
+#    14 of Debry-Perucca; i.e. each element of B[i] is, up to plus or minus 
+#    1, the 2^i-th power of a strongly 2-indivisible rational.
 # 3. For i != d every element of B[i] is positive, and B[d][0] is the only
 #    negative element of B[d] (if d=-1, then there is no negative element).
-# 3'. Notice that the existence on negative elements in B[0] does not influence
+# 3'. Notice that the existence on negative elements in B[0] does not change
 #    the correctness of the algorithm; in fact, the function adjust_sign
 #    produces a basis that may have negative elements of divisibility 0, and
 #    this basis is given as input for adelic_failure_gb.
@@ -30,9 +30,9 @@
 # integer such that the intersection of Q(\sqrt{2^n}{G}) with Q_\infty is
 # contained in Q_M0.
 # The table ad_fail has N rows, where N is defined below.
-# Each row R=ad_fail[i] contains a variable number of pairs (d,r), where d is a
-# divisor of M0 and r is the degree of Q(\sqrt{2^{i+1}}{G}) \cap Q_d over
-# Q_{2^n}.
+# Each row R=ad_fail[i] contains a variable number of pairs (d,r), where d 
+# is a divisor of M0 and r is the degree of Q(\sqrt{2^{i+1}}{G}) \cap Q_d 
+# over Q_{2^n}.
 # Each divisor of M appears at most once on each row, and the last element of
 # the last row is of the form (M0,r0).
 def adelic_failure_gb( B, d ):
@@ -40,48 +40,48 @@ def adelic_failure_gb( B, d ):
     # The table to be returned (or printed at the end), as described above.
     ad_fail = []
 
-    # N is such that for every n > N the adelic failure of Q(\sqrt{2^n}{G}) is
-    # the same as that of Q(\sqrt{2^N}{G}).
-    # We always have to include n=3, because of problem with sqrt(2) in Q_8 (in
-    # theory, this is not necessary in some cases, e.g. if 2 does not divide
-    # any element of G).
-    # If the negative generator is on the last level, we need to increase N by
-    # 1, because it would contribute to the shortlist in the next level (by
-    # taking the root of an even power).
+    # N is such that for every n > N the adelic failure of Q(\sqrt{2^n}{G})
+    # is the same as that of Q(\sqrt{2^N}{G}).
+    # We always have to include n=3, because of problem with sqrt(2) in Q_8
+    # (in theory, this is not necessary in some cases, e.g. if 2 does not 
+    # divide any element of G).
+    # If the negative generator is on the last level, we need to increase N
+    # by 1, because it would contribute to the shortlist in the next level
+    # (by taking the root of an even power).
     if d == len(B)-1:
         N = max(3,len(B)+1)
     else:
         N = max(3,len(B))
 
     # The intersection is given by adding the square roots of the elements of
-    # this shortlist (and a "special element", not always of the form sqrt(d),
-    # coming from taking a suitable root of a negative generator; this special
-    # element is dealt with later). The shortlist grows at each step, so we
-    # declare it before starting to loop over n and we build it incrementally.
-    # The "special element" is of the form \zeta_{2^n}\sqrt{b}, which we encode
-    # as (n,b). We use the value (1,1) (special element -1) to say that there
-    # isno special element at this level.
+    # this shortlist (and a "special element", not always of the form sqrt d,
+    # coming from taking a suitable root of a negative generator; this
+    # special element is dealt with later). The shortlist grows at each step,
+    # so we declare it before starting to loop over n and we build it
+    # incrementally. The "special element" is of the form \zeta_{2^n}\sqrt b,
+    # which we encode as (n,b). We use the value (1,1) (special element -1)
+    # to say that there is no special element at this level.
     shortlist = []
     special_element = (1,1)
 
     # The integers M, giving the smallest cyclotomic field in which lies the
-    # whole intersection with Q_\infty, also grows with n. As with the
-    # shortlist, we declare it here and increase it appropriately at each step.
+    # whole intersection with Q_\infty, grows with n. As with the shortlist,
+    # we declare it here and increase it appropriately at each step.
     M = 1
 
     for n in range( 1, N+1 ):
 
         # We add the new elements to the shortlist, modifying M if needed.
-        # This is not done in case we are in the extra "fake" level (this case
-        # dealt with immediately below).
+        # This is not done in case we are in the extra "fake" level (this
+        # case dealt with immediately below).
         if n-1 < len(B):
             for g in B[n-1]:
                 # Case of negative g
                 if g < 0 and n > 1:
                     # Special element of the form \zeta_{2^{n+1}}\sqrt(b).
-                    # It is contained in Q_{lcm(2^{n+1},cyc_emb(b))}, except in 
-                    # case n=2 and b=2, in which case it is contained in Q_4.
-                    # We store it as as pair ( n+1, b ).
+                    # It is contained in Q_{lcm(2^{n+1},cyc_emb(b))}, except 
+                    # in case n=2 and b=2, in which case it is contained in
+                    # Q_4. We store it as as pair ( n+1, b ).
                     special_element = ( n+1, abs(g)^(1/(2^(n-1))) )
                     M = lcm( M, special_embed( special_element ) )
                 else:
@@ -89,8 +89,8 @@ def adelic_failure_gb( B, d ):
                     shortlist.append( b )
                     M = lcm( M, cyc_embed(b) )
 
-        # We add a root of an even power of the negative generator, as soon as
-        # we are beyond its level.
+        # We add a root of an even power of the negative generator, as soon
+        # as we are beyond its level.
         if d != -1 and n == d+2:        
             b = abs(B[d][0])^(1/2^d)
             shortlist.append( b ) 
@@ -112,19 +112,20 @@ def adelic_failure_gb( B, d ):
 
         # For each divisor dM of M, compute the degree of the intersection of
         # Q(\sqrt{2^n}{G}) with Q_dM over Q_{2^n}. We need to compute the
-        # number r of elements in the subgroup of G generated by the shortlist
-        # that lie in Q_dM. This is going to be a power of 2. The sought degree
-        # will be r, up to considering some special cases (described below).
+        # number r of elements in the subgroup of G generated by the
+        # shortlist that lie in Q_dM. This is going to be a power of 2. The
+        # sought degree will be r, up to considering some special cases
+        # (described below).
         # 
-        # This algorithm could be inefficient for groups of big rank. It can be
-        # improved by precomputing subgroups of G/G^2 and the cyclotomic fields
-        # containing them.
+        # This algorithm could be inefficient for groups of big rank. It can
+        # be improved by precomputing subgroups of G/G^2 and the cyclotomic
+        # fields containing them.
 
         aux = [] # Next line of ad_fail table
 
         for dM in divisors( M ):
-            # We only care of the intersection with Q_dM if it contains the 2^n
-            # roots of unity.
+            # We only care of the intersection with Q_dM if it contains the
+            # 2^n roots of unity.
             if dM % (2^n) != 0:
                 continue
 
@@ -141,7 +142,7 @@ def adelic_failure_gb( B, d ):
             if n <= d and dM % (2^(n+1)) == 0 and n > 1:
                 r *= 2
 
-            # We loose a factor of 2 if we have sqrt(2) in Q_8 or \zeta_8 2 in
+            # We loose a factor of 2 if we have sqrt(2) in Q_8 or \zeta_8 in
             # Q_4.
             if 8 in H and dM % 8 == 0 and (n >= 3 or (n == 2 and n <= d)):
                 r = r/2
@@ -150,11 +151,11 @@ def adelic_failure_gb( B, d ):
             # We have to consider all possible special elements arising from
             # multiplying the given element with the other elements of the
             # shortlist.
-            # If any of them is of the form \zeta_8 2q for q a square, there is
-            # nothing to do: in fact \zeta_8 2 embeds in Q_4, which coincides
-            # with Q_{2^n} (n must be 2); so we would double the degree because
-            # of the existence of the special element, butthen we would loose
-            # another factor of 2 because of this.
+            # If any of them is of the form \zeta_8 2q for q a square, there
+            # is nothing to do: in fact \zeta_8 2 embeds in Q_4, which
+            # coincides with Q_{2^n} (n must be 2); so we would double the 
+            # degree because of the existence of the special element, but 
+            # then we would loose another factor of 2 because of this.
             if special_element != (1,1) and special_element[0] == n+1:
                 nothing_to_do = False
                 intersecting_QdM = False
@@ -223,15 +224,16 @@ def bad_primes( B ):
 
     return sorted(bad_primes) # Ensures 2 is always first
    
-# Computes the l-adic failure for a specific l. Returns a "table" as described
-# above "total_l_adic_failure".
+# Computes the l-adic failure for a specific l. Returns a "table" as
+# described above "total_l_adic_failure".
 # B is any basis for G.
 def l_adic_failure( B, l ):
 
     r = len(B)
     GB = make_good_basis( B, l )
     
-    # Computes the parameters over Q4. For l odd, they are the same as over Q.
+    # Computes the parameters for G over Q4. For l odd, they are the same as
+    # over Q.
     p = parameters_Q4( GB, l )
     maxM = max( [ sum(x) for x in p ] )
     maxN = max( maxM, len(GB)-1 )
@@ -281,15 +283,10 @@ def l_adic_failure_from_data( B, l, tablel, M, N ):
     
     return l^(r*n-tablel[m-1][0][n-1])
 
-# Returns the l-dvisibility parameters of G over Q, given a good basis gb of G,
-# as a list of pairs (di,hi).
-def parameters_Q( gb, l ):
-    #ret = []
-    #for i in range( len( gb ) ):
-    #    for j in gb[i]:
-    #        ret.append( (i,0) )
-    #return ret
-    return [x for a in [[(i,0)]*len(gb[i]) for i in range(len(gb))] for x in a]
+# Returns the l-dvisibility parameters of G over Q, given a good basis b of
+# G, as a list of pairs (di,hi).
+def parameters_Q( b, l ):
+    return [x for a in [[(i,0)]*len(b[i]) for i in range(len(b))] for x in a]
 
 # Computes the l-divisibility parameters of G over Q4, given a good basis gb
 # over Q for G. Returns a list of pairs (di,hi).
@@ -300,16 +297,13 @@ def parameters_Q4( gb, l ):
         return parameters_Q( gb, l )
     else:
         # Converts from "good basis format" to simple list
-        #b = []
-        #for x in gb:
-        #    b += x
         b = [ x for a in gb for x in a ]
     
         M = exponent_matrix( b )
 
-        # Thanks to my terrible notation, the elements of b are what are called
+        # Thanks to my bad notation, the elements of b are what are called
         # g_i in the article, while the elements of bb will be the b_i's.
-        bb = [ abs(b[i]) ^ (2^(-divisibility(M[i],2))) for i in range(len(b)) ]
+        bb = [ abs(b[i])^(2^(-divisibility(M[i],2))) for i in range(len(b)) ]
 
         # Computing a combination of bb elements of the form 2 * square.
         MM = exponent_matrix( bb + [2] ).change_ring( GF( 2 ) ) 
@@ -322,7 +316,7 @@ def parameters_Q4( gb, l ):
                 # Basis elements that actually appear in the combination
                 c = [ b[i] for i in range(len(a[0:-1])) if a[i] != 0 ]
 
-                # Return the parameters, changing only the ones for the element
+                # Return the parameters, changing only those of the element
                 # of highest divisibility that appears in the combination.
                 ret = []
                 div_max = -1
@@ -352,29 +346,14 @@ def compute_vl( p, n, m, r ):
     return M - m + r*n - sum( ni )
 
 # Computes a basis for G from a set of generators.
-# Returns a pair (B,torsion) where B is a list of rational numbers and torsion
-# is true if -1 is in G and false otherwise.
+# Returns a pair (B,torsion) where B is a list of rational numbers and
+# torsion is true if -1 is in G and false otherwise.
 def generators_to_basis( G ):
     (BM,BM_primes) = exponent_matrix_with_sign_and_primes( G )
     BM = BM.echelon_form()
     BM_primes.append(-1)
 
-    #B = []
-    #torsion = False
-
-    #for r in BM.rows():
-    #    gr = product( [ BM_primes[i]^r[i] for i in range(len(r)) ] )
-    #    if gr == -1:
-    #        torsion = True
-    #        break
-    #    elif gr == 1:
-    #        break
-    #   else:
-    #        B.append(gr)
-
-    #return (B,torsion)
-
-    B = [ prod([BM_primes[i]^r[i] for i in range(len(r))]) for r in BM.rows() ]
+    B = [prod([BM_primes[i]^r[i] for i in range(len(r))]) for r in BM.rows()]
 
     return ( [ x for x in B if abs(x) != 1 ], -1 in B )
 
@@ -383,12 +362,6 @@ def generators_to_basis( G ):
 # using the algorithm outlined in the proof of Theorem 14 of (Debry-Perucca).
 def make_good_basis( b, l ):
     M = exponent_matrix( b )
-    #d = []
-    #B = []
-    #for i in range(len(b)):
-    #    di = divisibility( M[i], l )
-    #    d.append( di )
-    #    B.append( abs(b[i])^(1/(l^di)) )
     d = [ divisibility(x,l) for x in M ]
     B = [ abs(b[i])^(1/(l^d[i])) for i in range(len(b)) ]
 
@@ -398,8 +371,8 @@ def make_good_basis( b, l ):
 
     while coeffs != []:
 
-        # Computes which basis element (with non-zero coefficient in the linear
-        # combination above) has maximal divisibility.
+        # Computes which basis element (with non-zero coefficient in the
+        # linear combination above) has maximal divisibility.
         maxi = -1
         maxd = -1
         for i in range(len(d)):
@@ -407,12 +380,9 @@ def make_good_basis( b, l ):
                 maxd = d[i]
                 maxi = i
 
-        x = [ (a/coeffs[maxi]).lift() for a in coeffs ] # Now a vector of ints
+        x = [ (a/coeffs[maxi]).lift() for a in coeffs ] # Now a vector of int
 
-        #new_elt = 1
-        #for i in range(len(d)):
-        #    new_elt *= b[i]^( x[i] * l^(d[maxi]-d[i]) )
-        new_elt = prod([ b[i]^(x[i]*l^(d[maxi]-d[i])) for i in range(len(d)) ])
+        new_elt = prod([b[i]^(x[i]*l^(d[maxi]-d[i])) for i in range(len(d))])
         
         b[maxi] = new_elt
         M = exponent_matrix( b )
@@ -421,20 +391,13 @@ def make_good_basis( b, l ):
         
         coeffs = find_combination( exponent_matrix( B ), l )
 
-    #GB = [[]]
-    #for i in range(len(d)):
-    #    while( len(GB) <= d[i] ):
-    #        GB.append([])
-    #    GB[d[i]].append(b[i])
-    #return GB
-
     return [[b[i] for i in range(len(b)) if d[i]==j] for j in range(max(d)+1)]
 
-# Takes a good basis B and adjusts the sign of the elements so that there is at
-# most one negative generator (of positive divisibility). The input is a good
-# basis in the format returned by make_good_basis.
-# Returns a pair (B,d), where B is the updated basis and d is the divisibility
-# parameter of the only negative element remained.
+# Takes a good basis B and adjusts the sign of the elements so that there is
+# at most one negative generator (of positive divisibility). The input is a
+# good basis in the format returned by make_good_basis.
+# Returns a pair (B,d), where B is the updated basis and d is the 
+# divisibility parameter of the only negative element remained.
 # The sign of the d=0 elements is just ignored in the other steps of the
 # algorithm, so we keep them negative.
 def adjust_sign( B ):
@@ -491,12 +454,8 @@ def exponent_matrix( B ):
 # Returns a pair (M,L) where M is the modified exponent matrix and L is the
 # list of primes appearing in the factorization.
 def exponent_matrix_with_sign_and_primes( B ): 
-    #prime_list = set()
-    #for g in B:
-    #    prime_list |= set( prime_factors( g ) )
-    #prime_list = list( prime_list )
 
-    prime_list = list({ x for a in [prime_factors(g) for g in B] for x in a })
+    prime_list = list({x for a in [prime_factors(g) for g in B] for x in a})
     np = len( prime_list )
 
     rows = []
@@ -516,8 +475,8 @@ def TotalKummerFailure( G ):
 
 # Input: any set of generators for a subgroup G of Q*.
 # If output=False, returns a 4-uple (t,MM,NN,D):
-# - t is a pair, where t[0] is the rank of G and t[1] is either True (if G has
-#   torsion) or False (is it does not).
+# - t is a pair, where t[0] is the rank of G and t[1] is either True (if G
+#   has torsion) or False (is it does not).
 # - MM is the pair (M0,divisors(M0))
 # - NN is the pair (N0,divisors(N0))
 # - D is a table F, where F[j][i] is the ration between phi(m)n^r and the
@@ -543,9 +502,6 @@ def total_kummer_failure( G, output ):
     adelic_failure_table = adelic_failure_gb( GB, d )
     
     # Computing the bounds M0 and N0
-    #N0 = 1
-    #for i in range(len( bad_primes )):
-    #    N0 *= bad_primes[i] ^ len( l_adic_failure_table[i][-1][0] )
     N0 = prod( [ bad_primes[i] ^ len( l_adic_failure_table[i][-1][0] ) \
             for i in range(len(bad_primes)) ] )
     # Extra factors of 2 may come from the adelic failure
@@ -596,9 +552,9 @@ def total_kummer_failure( G, output ):
 # as the ration between 2^eN^r and the degree of Q_{M,N} over Q_M, where e=1
 # if N is even and e=0 otherwise.
 
-# Makes the failure table for the torsion case when M/N is even. In this case,
-# an entry of the table is doubled if the corresponding value of N (actually,
-# of gcd(N,N0) ) is even, and is kept the same otherwise.
+# Makes the failure table for the torsion case when M/N is even. In this
+# case an entry of the table is doubled if the corresponding value of N
+# (actually, of gcd(N,N0) ) is even, and is kept the same otherwise.
 # The expected degree (over Q) 2^e * phi(M) * N^r, where e=1 if N is even and
 # e=0 otherwise.
 def torsion_table_even( data ):
@@ -615,8 +571,8 @@ def torsion_table_even( data ):
 
 # Makes the failure table for the torsion case when M/N is odd. In this case
 # the entry at (M,N) is taken from the torsion-free entry at (2M,N).
-# In other words, the expected degree (over Q) 2^e * phi(M) * N^r, where e=1 if
-# N is even and e=0 otherwise.
+# In other words, the expected degree (over Q) 2^e * phi(M) * N^r, where e=1
+# if N is even and e=0 otherwise.
 def torsion_table_odd( data ):
 
     ( ( r, torsion ), ( M0, divs_M0 ), ( N0, divs_N0 ), FT ) = data
@@ -672,17 +628,17 @@ def print_total_table( data ):
 
     if torsion:
         print "The following table shows the total failure of Kummer degrees",
-        print "in case the quotient M/N is ODD and is read as the previous one."
+        print "if the quotient M/N is ODD and is read as the previous one."
         print ""
 
         # A good strategy is the following:
         #   A little translation exercise: the failure at (M,N) in the torsion
-        #   case is either the same as that for (2M,N) in the torsion-free case
-        #   (if M is even) or its double (if M is odd).
+        #   case is either the same as that for (2M,N) in the torsion-free
+        #   case (if M is even) or its double (if M is odd).
         # However, due to problems in reading the table for bigger M, it is
         # easier to just compute the degree every time, and then deduce the
-        # failure. This is not too inefficient, since we can use the data that
-        # we have already computed via kummer_degree_from_total_table.
+        # failure. This is not too inefficient, since we can use the data
+        # that we have already computed via kummer_degree_from_total_table.
         new_FT = torsion_table_odd( data )
         # Printing the new table
         tt = [ ["","|"] + divs_M0 ]
@@ -717,7 +673,7 @@ def print_case_list( data ):
             print "or if M/N is ODD and (gcd(M,M0)),gcd(N,N0)) is one of the",
             print "following:"
             print [ (divs_M0[j], divs_N0[i]) \
-                    for i in range(len(divs_N0)) for j in range(len(divs_M0)) \
+                    for i in range(len(divs_N0)) for j in range(len(divs_M0))\
                     if FT_odd[i][j] == f ]
 
         print ""
@@ -758,10 +714,10 @@ def KummerDegree( G, M, N ):
     data = total_kummer_failure(G,False)
     ((r,torsion),(M0,divs_M0),(N0,divs_N0),FT) = data
 
-    exp_deg = euler_phi(M) * N^r
+    e_deg = euler_phi(M) * N^r
     
     if torsion and N % 2 == 0:
-        exp_deg *= 2
+        e_deg *= 2
     
     if torsion: 
         if (M/N)%2 == 0:
@@ -771,4 +727,4 @@ def KummerDegree( G, M, N ):
     else:
         failure = FT
 
-    return exp_deg/failure[divs_N0.index(gcd(N,N0))][divs_M0.index(gcd(M,M0))]
+    return e_deg/failure[divs_N0.index(gcd(N,N0))][divs_M0.index(gcd(M,M0))]
