@@ -9,6 +9,8 @@
 # set of generators is sufficient.                                          #
 #############################################################################
 
+from sage.misc.cachefunc import CachedFunction
+
 # Computes the "adelic Kummer failure", i.e. the degrees of the intersection
 # of the the Kummer extension Q(\sqrt{2^n}{G}) with the M-th cyclotomic field
 # over Q_{2^n}.
@@ -218,11 +220,11 @@ def bad_primes( B ):
         return
 
     # Compute which primes l divide all minors of the exponent matrix
-    bad_primes = list( prime_factors( gcd( M.minors(a) ) ) )
-    if 2 not in bad_primes:
-        bad_primes += [2] # 2 is always bad
+    bad_p = list( prime_factors( gcd( M.minors(a) ) ) )
+    if 2 not in bad_p:
+        bad_p += [2] # 2 is always bad
 
-    return sorted(bad_primes) # Ensures 2 is always first
+    return sorted(bad_p) # Ensures 2 is always first
    
 # Computes the l-adic failure for a specific l. Returns a "table" as
 # described above "total_l_adic_failure".
@@ -345,11 +347,12 @@ def compute_vl( p, n, m, r ):
     
     return M - m + r*n - sum( ni )
 
-# Computes a basis for G from a set of generators.
+# Computes a basis for G from a frozen_set of generators.
 # Returns a pair (B,torsion) where B is a list of rational numbers and
 # torsion is true if -1 is in G and false otherwise.
+@CachedFunction
 def generators_to_basis( G ):
-    (BM,BM_primes) = exponent_matrix_with_sign_and_primes( G )
+    (BM,BM_primes) = exponent_matrix_with_sign_and_primes( list(G) )
     BM = BM.echelon_form()
     BM_primes.append(-1)
 
@@ -416,6 +419,7 @@ def adjust_sign( B ):
 # Given the exponent matrix M of a list of rational numbers B, returns the
 # coefficients of a linear combination that is weakly l-divisible, or [] if
 # the B[i] are strongly l-independent.
+@CachedFunction
 def find_combination( M, l ):
     M = M.change_ring( GF( l ) )
     if M.rank() != min( M.dimensions() ):
@@ -469,10 +473,11 @@ def exponent_matrix_with_sign_and_primes( B ):
         rows.append( rowg )
     return ( matrix( rows ), prime_list )
 
-# This is a wrapper function for total_kummer_failure( G, True ), see below.
-def TotalKummerFailure( G ):
-    total_kummer_failure( G, True )
-
+# The function TotalKummerFailure (with its many wrapper functions) computes
+# the total table of Kummer Failures for the given group G. Moreover, the
+# result is cached for speeding up following computations on the same group,
+# even if the same group is given with a different set of generators.
+#
 # Input: any set of generators for a subgroup G of Q*.
 # If output=False, returns a 4-uple (t,MM,NN,D):
 # - t is a pair, where t[0] is the rank of G and t[1] is either True (if G
@@ -485,9 +490,18 @@ def TotalKummerFailure( G ):
 #   computed for a torsion-free part of G.
 # If output is True, outputs this data in a human-readable way and does not
 # return any value.
-def total_kummer_failure( G, output ):
 
+def TotalKummerFailure( G ):
+    total_kummer_failure( G, True )
+
+@CachedFunction
+def total_kummer_failure_cachable( G ):
     B, torsion = generators_to_basis( G )
+    return total_kummer_failure_cachable_basis( tuple(B), torsion )
+
+@CachedFunction
+def total_kummer_failure_cachable_basis( B, torsion ):
+    B = list(B)
     r = len(B) # Rank of G
 
     if r == 0:
@@ -495,15 +509,15 @@ def total_kummer_failure( G, output ):
         return False
 
     # Compute l-adic data (straightforward)
-    ( bad_primes, l_adic_failure_table ) = total_l_adic_failure( B )
+    ( bad_p, l_adic_failure_table ) = total_l_adic_failure( B )
 
     # Compute adelic data.
     (GB,d) = adjust_sign( make_good_basis( B, 2 ) )
     adelic_failure_table = adelic_failure_gb( GB, d )
     
     # Computing the bounds M0 and N0
-    N0 = prod( [ bad_primes[i] ^ len( l_adic_failure_table[i][-1][0] ) \
-            for i in range(len(bad_primes)) ] )
+    N0 = prod( [ bad_p[i] ^ len( l_adic_failure_table[i][-1][0] ) \
+            for i in range(len(bad_p)) ] )
     # Extra factors of 2 may come from the adelic failure
     N0 = lcm( N0, 2^len( adelic_failure_table ) )
     divs_N0 = divisors(N0)
@@ -530,16 +544,20 @@ def total_kummer_failure( G, output ):
                                 FT[j][l] = lcm( FT[j][l], pp[1] )
 
     # Adding l-adic failure to the table
-    for i in range( len( bad_primes ) ):
-        l = bad_primes[i]
+    for i in range( len( bad_p ) ):
+        l = bad_p[i]
         for j in range(len(divs_N0)):
             dN = divs_N0[j]
             fl = l_adic_failure_from_data(B,l,l_adic_failure_table[i],dN,dN)
             for h in range(len(divs_M0)):
                 FT[j][h] *= fl
 
-    ret = ( ( r, torsion ), ( M0, divs_M0 ), ( N0, divs_N0 ), FT )
+    return ( ( r, torsion ), ( M0, divs_M0 ), ( N0, divs_N0 ), FT )
 
+def total_kummer_failure( G, output ):
+    
+    ret = total_kummer_failure_cachable( frozenset(G) )
+    
     if output:
         print_total_table( ret )
         # Uncomment following line for case list description.
@@ -728,3 +746,4 @@ def KummerDegree( G, M, N ):
         failure = FT
 
     return e_deg/failure[divs_N0.index(gcd(N,N0))][divs_M0.index(gcd(M,M0))]
+
