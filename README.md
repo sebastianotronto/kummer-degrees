@@ -29,16 +29,24 @@ generators can slow the script as well.
 * The code is very fast for groups of small rank (e.g. up to 5) and generated
 by elements of magnitude 10^6; higher ranks are feasible as well with smaller
 generators.
+* The complexity of the calculation of a call of KummerDegree(G,M,N) does not
+depend on M and N.
 
 
 ## KummerDegree( G, M, N )
 
 Returns the degree of the Kummer extension Q_{M,N}. Again, G is given simply as a list of generators and it may contain torsion.
 
-Example:
+Examples:
+
 ```
 sage: KummerDegree([-36,12,-1],120,24)
 4608
+```
+
+```
+sage: KummerDegree([144,27,49/81,-1/125,121/13],36*10^6,36*10^6)
+1007769600000000000000000000000000000000000
 ```
 
 ## TotalKummerFailure( G )
