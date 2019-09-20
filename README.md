@@ -36,8 +36,7 @@ generators can slow the script as well.
 * The code is very fast for groups of small rank (e.g. up to 5) and generated
 by elements of magnitude 10^6; higher ranks are feasible as well with smaller
 generators.
-* The complexity of the calculation of a call of KummerDegree(G,M,N) does not
-depend on M and N.
+* The complexity of KummerDegree(G,M,N) does not depend on M and N.
 
 Moreover, the results for each group G are cached, so that subsequent
 computation of degrees for the same group G only require constant time
