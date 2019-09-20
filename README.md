@@ -10,6 +10,23 @@ Q(\zeta_M,G^{1/N}), where:
 * G^{1/N} is the set of all elements x of an algebraic closure of Q such that
 x^n belongs to G.
 
+The main importance of this script is to show that, for a fixed group G as
+above, one can compute in a finite time a finite-case-distinction formula
+that computes the degrees [Q_{M,N}:Q] of such extensions when M and N vary.
+A preprint by A. Perucca, P. Sgobba and S. Tronto that explains how this is
+possible can be found in the docs folder.
+
+I have not computed accurately the complexity of the code. However, I can
+say the following:
+* The complexity is exponential in the rank r of the group.
+* The script can become slow if the generators of the group G are n-th powers
+for very high n.
+* The generators given are factored as product of prime powers, so very large
+generators can slow the script as well.
+* The code is very fast for groups of small rank (e.g. up to 5) and generated
+by elements of magnitude 10^6; higher ranks are feasible as well with smaller
+generators.
+
 It contains the following useful functions:
 
 ## TotalKummerFailure( G )
