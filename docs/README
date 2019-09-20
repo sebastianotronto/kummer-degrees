@@ -1,7 +1,7 @@
-The file preprint.pdf is the preprint of the paper where the theory on whic
+The file preprint.pdf is the preprint of the paper where the theory on which
 this script is based is developed.
 
-In the filde af_code.pdf we break down the code for computing the adelic
+In the file af_code.pdf we break down the code for computing the adelic
 failure. The aim is to bridge the gap between the theory and the SageMath code,
 making it possible for the reader to check that the code actually computes the
 correct degrees.
