@@ -155,7 +155,9 @@ M_0 = 40
 N_0 = 8
 
 The following table shows the total failure of Kummer degrees.
-The degree of the Kummer extension (M,N) is e / f, where e = phi(M)*N^rank(G) and f is the entry of the table below at the row labelled with gcd(N,N0) and the column labelled with gcd(M,M0).
+The degree of the Kummer extension (M,N) is e / f, where e = phi(M)*N^rank(G)
+and f is the entry of the table below at the row labelled with gcd(N,N0) and
+the column labelled with gcd(M,M0).
 
       |   1   2   4   5   8   10   20   40
   -   -   -   -   -   -   -   -    -    -
