@@ -2,6 +2,14 @@
 A SageMath script that computes the degrees of Kummer Extensions of the
 rational numbers.
 
+A Kummer Extension of Q is a field extension of the form Q_{M,N}:=
+Q(\zeta_M,G^{1/N}), where:
+* M and N are integers with N dividing M;
+* \zeta_M is a root of unity of order M;
+* G is a finitely generated subgroup of the multiplicative group of Q;
+* G^{1/N} is the set of all elements x of an algebraic closure of Q such that
+x^n belongs to G.
+
 It contains the following useful functions:
 
 ## TotalKummerFailure( G )
