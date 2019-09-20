@@ -3,7 +3,10 @@ A one-file SageMath script to compute the degrees of Kummer Extensions of
 the rational numbers. In order to use the functions KummerDegree and
 TotalKummerFailure (described below), simply download the file
 kummer_degree.sage and include it in your SageMath session/project,
-for example with attach("kummer_degree.sage").
+for example with
+```
+attach("kummer_degree.sage").
+```
 
 A Kummer Extension of Q is a field extension of the form Q_{M,N}:=
 Q(\zeta_M,G^{1/N}), where:
