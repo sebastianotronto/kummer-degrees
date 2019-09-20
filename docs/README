@@ -1,7 +1,0 @@
-Here we collect some incomplete and work-in-progress documentation.
-
-In compute_degrees we prove that our way to compute the degrees gives the
-correct result.
-
-In af_code we break down the code for the "adelic failure" part of the script
-and we check that it computes the degrees as described in compute_degrees.
