@@ -32,19 +32,29 @@ generators.
 * The complexity of the calculation of a call of KummerDegree(G,M,N) does not
 depend on M and N.
 
+Moreover, the results for each group G are cached, so that subsequent
+computation of degrees for the same group G only require constant time
+(and are very fast).
+
 
 ## KummerDegree( G, M, N )
 
-Returns the degree of the Kummer extension Q_{M,N}. Again, G is given simply as a list of generators and it may contain torsion.
+Returns the degree of the Kummer extension Q_{M,N}=Q(\zeta_M,G^{1/N}) over Q.
 
-Examples:
+INPUT:
+* G - a list of generators of the group G
+* M - a positive integer
+* N - a positive divisor of N
 
+OUTPUT:
+The degree of the Kummer Extensions Q_{M,N}=Q(\zeta_M,G^{1/N}) over Q.
+
+EXAMPLES:
 ```
+sage: KummerDegree([5],10,2)
+4
 sage: KummerDegree([-36,12,-1],120,24)
 4608
-```
-
-```
 sage: KummerDegree([144,27,49/81,-1/125,121/13],36*10^6,36*10^6)
 1007769600000000000000000000000000000000000
 ```
