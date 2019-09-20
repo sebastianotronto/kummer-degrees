@@ -48,11 +48,13 @@ computation of degrees for the same group G only require constant time
 Returns the degree of the Kummer extension Q_{M,N}=Q(\zeta_M,G^{1/N}) over Q.
 
 INPUT:
+
 * G - a list of generators of the group G
 * M - a positive integer
 * N - a positive divisor of N
 
 OUTPUT:
+
 The degree of the Kummer Extensions Q_{M,N}=Q(\zeta_M,G^{1/N}) over Q.
 
 EXAMPLES:
@@ -71,9 +73,11 @@ Outputs the description of the failure of maximality for all possible values
 of M and N.
 
 INPUT:
+
 G - a list of generators for the group G
 
 OUPUT:
+
 The first part of the output consist of two positive integers M_0 and N_0.
 N_0 is always a divisor of M_0.
 
