@@ -5,7 +5,7 @@ TotalKummerFailure (described below), simply download the file
 kummer_degree.sage and include it in your SageMath session/project,
 for example with
 ```
-attach("kummer_degree.sage").
+attach("kummer_degree.sage")
 ```
 
 A Kummer Extension of Q is a field extension of the form Q_{M,N}:=
@@ -22,7 +22,7 @@ this field Galois over Q.
 
 The main importance of this script is to show that, for a fixed group G as
 above, one can compute in a finite time a finite-case-distinction formula
-that computes the degrees [Q_{M,N}:Q] of such extensions when M and N vary.
+that computes the degrees of such extensions when M and N vary.
 A preprint by A. Perucca, P. Sgobba and S. Tronto that explains how this is
 possible can be found in the docs folder.
 
