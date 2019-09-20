@@ -94,7 +94,7 @@ over Q, is given by the (i,j)-th entry of the table for i=gcd(N,N_0) and
 j=gcd(M,M_0).
 
 In case -1 belongs to G, we need to distinguish two cases, depending on the
-parity of M/N. The two tables are similar to the case described
+parity of M/N. The two tables are similar to the one described
 above, and can be seen in the example below.
 
 The output includes an explanation of the tables and how to read them to
