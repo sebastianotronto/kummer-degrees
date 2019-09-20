@@ -30,7 +30,16 @@ generators can slow the script as well.
 by elements of magnitude 10^6; higher ranks are feasible as well with smaller
 generators.
 
-It contains the following useful functions:
+
+## KummerDegree( G, M, N )
+
+Returns the degree of the Kummer extension Q_{M,N}. Again, G is given simply as a list of generators and it may contain torsion.
+
+Example:
+```
+sage: KummerDegree([-36,12,-1],120,24)
+4608
+```
 
 ## TotalKummerFailure( G )
 
@@ -65,12 +74,4 @@ The following table shows the total failure of Kummer degrees if the quotient M/
 
 ```
 
-## KummerDegree( G, M, N )
 
-Returns the degree of the Kummer extension Q_{M,N}. Again, G is given simply as a list of generators and it may contain torsion.
-
-Example:
-```
-sage: KummerDegree([-36,12,-1],120,24)
-4608
-```
