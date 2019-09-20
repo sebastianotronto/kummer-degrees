@@ -86,8 +86,9 @@ the group G. In case -1 is not an element of G, there is only one table,
 otherwise two.
 
 In case -1 does not belong to G:
-The rows of the table(s) are labelled with divisors of N_0, while the columns
-with divisors of M_0. The total failure of maximality of the Kummer Extension
+The rows of the table are labelled with the divisors of N_0, while the
+columns with the divisors of M_0. The total failure of maximality of the 
+Kummer Extension
 Q_{M,N}, i.e. the ratio between phi(M)*N^rank(G) and the degree of Q_{M,N}
 over Q, is given by the (i,j)-th entry of the table for i=gcd(N,N_0) and
 j=gcd(M,M_0).
