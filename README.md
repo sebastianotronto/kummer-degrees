@@ -141,3 +141,35 @@ M/N is ODD and is read as the previous one.
 
 ```
 
+Uncommenting the line of code:
+```
+print_case_list( ret )
+```
+inside the function total_kummer_failure makes the script output the
+description of the total failure as a finite list of cases, as below:
+
+```
+
+sage: TotalKummerFailure([25])
+M_0 = 40
+N_0 = 8
+
+The following table shows the total failure of Kummer degrees.
+The degree of the Kummer extension (M,N) is e / f, where e = phi(M)*N^rank(G) and f is the entry of the table below at the row labelled with gcd(N,N0) and the column labelled with gcd(M,M0).
+
+      |   1   2   4   5   8   10   20   40
+  -   -   -   -   -   -   -   -    -    -
+  1   |   1   1   1   1   1   1    1    1
+  2   |   2   2   2   2   2   2    2    2
+  4   |   2   2   2   2   2   2    4    4
+  8   |   2   2   2   2   2   2    2    4
+
+Failure is 1 if (gcd(M,M0),gcd(N,N0)) is one of the following:
+[(1, 1), (2, 1), (4, 1), (5, 1), (8, 1), (10, 1), (20, 1), (40, 1)]
+
+Failure is 2 if (gcd(M,M0),gcd(N,N0)) is one of the following:
+[(1, 2), (2, 2), (4, 2), (5, 2), (8, 2), (10, 2), (20, 2), (40, 2), (1, 4), (2, 4), (4, 4), (5, 4), (8, 4), (10, 4), (1, 8), (2, 8), (4, 8), (5, 8), (8, 8), (10, 8), (20, 8)]
+
+Failure is 4 if (gcd(M,M0),gcd(N,N0)) is one of the following:
+[(20, 4), (40, 4), (40, 8)]
+```
