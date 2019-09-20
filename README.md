@@ -1,5 +1,7 @@
 # Kummer Degrees
-A SageMath script that computes the degrees of Kummer Extensions of the rational numbers.
+A SageMath script that computes the degrees of Kummer Extensions of the
+rational numbers.
+
 It contains the following useful functions:
 
 ## TotalKummerFailure( G )
