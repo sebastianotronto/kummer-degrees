@@ -26,8 +26,8 @@ that computes the degrees of such extensions when M and N vary.
 A preprint by A. Perucca, P. Sgobba and S. Tronto that explains how this is
 possible can be found in the docs folder.
 
-I have not computed accurately the complexity of the code. However, I can
-say the following:
+The computational complexity of the algorithm has not been computed precisely.
+However, we can say the following:
 * The complexity is exponential in the rank r of the group.
 * The script can become slow if the generators of the group G are n-th powers
 for very high n.
