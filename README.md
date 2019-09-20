@@ -61,18 +61,66 @@ sage: KummerDegree([144,27,49/81,-1/125,121/13],36*10^6,36*10^6)
 
 ## TotalKummerFailure( G )
 
-Outputs the description of the failure of maximality for all possible values of M and N. Here G is given as a list of generators (not necessarily a basis). G can also contain torsion. If G = <-1>, the program stops immediately.
+Outputs the description of the failure of maximality for all possible values
+of M and N.
 
-Example:
+INPUT:
+G - a list of generators for the group G
+
+OUPUT:
+The first part of the output consist of two positive integers M_0 and N_0.
+N_0 is always a divisor of M_0.
+
+The second part of the output can be either one or two tables, depending on
+the group G. In case -1 is not an element of G, there is only one table,
+otherwise two.
+
+In case -1 does not belong to G:
+The rows of the table(s) are labelled with divisors of N_0, while the columns
+with divisors of M_0. The total failure of maximality of the Kummer Extension
+Q_{M,N}, i.e. the ratio between phi(M)*N^rank(G) and the degree of Q_{M,N}
+over Q, is given by the (i,j)-th entry of the table for i=gcd(N,N_0) and
+j=gcd(M,M_0).
+
+In case -1 belongs to G, we need to distinguish two cases, depending on the
+parity of M/N. The two tables are similar to the case described
+above, and can be seen in the example below.
+
+The output includes an explanation of the tables and how to read them to
+deduce the actual degrees (that can be computed with KummerDegree).
+
+EXAMPLES:
+
+```
+sage: TotalKummerFailure([-36,12])
+M_0 = 24
+N_0 = 8
+
+The following table shows the total failure of Kummer degrees.
+The degree of the Kummer extension (M,N) is e / f, where e = phi(M)*N^rank(G)
+and f is the entry of the table below at the row labelled with gcd(N,N0) and
+the column labelled with gcd(M,M0).
+
+      |   1   2   3   4   6   8   12   24
+  -   -   -   -   -   -   -   -   -    -
+  1   |   1   1   1   1   1   1   1    1
+  2   |   1   1   1   2   2   2   4    4
+  4   |   4   4   4   4   4   4   8    8
+  8   |   4   4   4   4   4   4   4    8
 
 ```
 
+```
 sage: TotalKummerFailure([-36,12,-1])
 M_0 = 24
 N_0 = 8
 
-The following table shows the total failure of Kummer degrees in case the quotient M/N is EVEN.
-The degree of the Kummer extension (M,N) is e / f, where e = phi(M)*N^rank(G) if N is odd and e = 2*phi(M)*N^rank(G) if N is even and f is the entry of the table below at the row labelled with gcd(N,N0) and the column labelled with gcd(M,M0).
+The following table shows the total failure of Kummer degrees in case the
+quotient M/N is EVEN.
+The degree of the Kummer extension (M,N) is e / f, where e = phi(M)*N^rank(G)
+if N is odd and e = 2*phi(M)*N^rank(G) if N is even and f is the entry of the
+table below at the row labelled with gcd(N,N0) and the column labelled with
+gcd(M,M0).
 
       |   1   2   3   4   6   8   12   24
   -   -   -   -   -   -   -   -   -    -
@@ -81,7 +129,8 @@ The degree of the Kummer extension (M,N) is e / f, where e = phi(M)*N^rank(G) if
   4   |   4   4   4   4   4   8   8    16
   8   |   8   8   8   8   8   8   8    16
 
-The following table shows the total failure of Kummer degrees if the quotient M/N is ODD and is read as the previous one.
+The following table shows the total failure of Kummer degrees if the quotient
+M/N is ODD and is read as the previous one.
 
       |   1   2   3   4   6   8   12   24
   -   -   -   -   -   -   -   -   -    -
@@ -91,5 +140,4 @@ The following table shows the total failure of Kummer degrees if the quotient M/
   8   |   4   4   4   4   4   4   8    8
 
 ```
-
 
