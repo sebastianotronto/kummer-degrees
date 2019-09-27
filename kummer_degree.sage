@@ -288,7 +288,12 @@ def l_adic_failure_from_data( B, l, tablel, M, N ):
 # Returns the l-dvisibility parameters of G over Q, given a good basis b of
 # G, as a list of pairs (di,hi).
 def parameters_Q( b, l ):
-    return [x for a in [[(i,0)]*len(b[i]) for i in range(len(b))] for x in a]
+    if l != 2:
+        return [x for a in [[(i,0)]*len(b[i]) for i in range(len(b))] \
+                for x in a]
+    else:
+        return [x for a in [[(i,1-max(0,sgn(g))) for g in b[i]] \
+                for i in range(len(b))] for x in a]
 
 # Computes the l-divisibility parameters of G over Q4, given a good basis gb
 # over Q for G. Returns a list of pairs (di,hi).
@@ -309,31 +314,37 @@ def parameters_Q4( gb, l ):
 
         # Computing a combination of bb elements of the form 2 * square.
         MM = exponent_matrix( bb + [2] ).change_ring( GF( 2 ) ) 
-
+        
         for a in MM.kernel().basis():
             if a[-1] != 0:
                 # the vector a[0:-1] gives the coefficients for a combination
-                # of the b_i's of the form 2 * square
+                # of the b_i's of the form 2 * square.
                 
-                # Basis elements that actually appear in the combination
-                c = [ b[i] for i in range(len(a[0:-1])) if a[i] != 0 ]
+                # Index of asis elements that do appear in the combination
+                c = [ i for i in range(len(a[0:-1])) if a[i] != 0 ]
+                
+                # Change of basis to include the element of the form 
+                # 2 * square to some power.
+                div_max = -1
+                i_max = -1
+                for j in c:
+                    if divisibility(M[j],2) > div_max:
+                        div_max = divisibility(M[j],2)
+                        i_max = j
+                b[i_max] = prod([b[j]^(2^(div_max-divisibility(M[j],2))) \
+                                 for j in c])
+                M = exponent_matrix(b)
 
                 # Return the parameters, changing only those of the element
                 # of highest divisibility that appears in the combination.
-                ret = []
-                div_max = -1
-                ind_max = -1
-                for i in range(len(b)):
-                    ret.append( (divisibility(M[i],2), 1-max(0,sgn(b[i]))) )
-                    if a[i] != 0 and ret[i][0] > div_max:
-                        div_max = ret[i][0]
-                        ind_max = i
-                d1, h1 = ret[ind_max]
+                ret = [(divisibility(M[i],2),1-max(0,sgn(b[i]))) \
+                        for i in range(len(b)) ]
+                d1, h1 = ret[i_max]
                 if d1 == 1:
                     h1 = 1 - h1
                 elif d1 == 0:
                     h1 = 2
-                ret[ind_max] = ( d1+1, h1 )
+                ret[i_max] = ( d1+1, h1 )
 
                 return ret
 
