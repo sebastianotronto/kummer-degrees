@@ -173,8 +173,8 @@ def cyc_embed( b ):
 # Computes the minimal cyclotomic field containing \zeta_{2^n}\sqrt(b),
 # where (n,b)=p
 def special_embed( p ):
-    n = p.first
-    n = p.second
+    n = p[0]
+    b = p[1]
     m = squarefree_part(b)
     if n == 3 and m % 2 == 0:
         return 4 * cyc_embed(m/2)
