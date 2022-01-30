@@ -5,11 +5,12 @@ TotalKummerFailure (described below), simply download the file
 kummer_degree.sage and include it in your SageMath session/project,
 for example with
 ```
-attach("kummer_degree.sage")
+attach(\"kummer_degree.sage\")
 ```
 
 A Kummer Extension of Q is a field extension of the form Q_{M,N}:=
 Q(\zeta_M,G^{1/N}), where:
+
 * M and N are integers with N dividing M;
 * \zeta_M is a root of unity of order M;
 * G is a finitely generated subgroup of the multiplicative group Q* of Q;
@@ -28,6 +29,7 @@ possible can be found in the docs folder.
 
 The computational complexity of the algorithm has not been computed precisely.
 However, we can say the following:
+
 * The complexity is exponential in the rank r of the group.
 * The script can become slow if the generators of the group G are n-th powers
 for very high n.
